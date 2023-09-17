@@ -7,11 +7,11 @@
 > list: off, trace, debug, info, warn, error
 > both upper, lower case are parsable
 
-2. extern crate in your main.rs or lib.rs
+2. add log lib and extern it in your main.rs or lib.rs
 
 ```rust
 #[macro_use]
-extern crate xan_log;
+extern crate log;
 ```
 
 3. init logger and use the macros
@@ -20,7 +20,7 @@ extern crate xan_log;
 use xan_log::init_logger;
 
 #[macro_use]
-extern crate xan_log;
+extern crate log;
 
 fn main() {
     init_logger();
