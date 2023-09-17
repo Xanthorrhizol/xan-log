@@ -1,7 +1,5 @@
 use log::{LevelFilter, Log, Metadata, Record, SetLoggerError};
 
-pub extern crate log;
-
 static LOGGER: XanLogger = XanLogger {
     log_level: LevelFilter::Off,
 };
