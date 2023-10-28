@@ -3,6 +3,11 @@ name = "xan-log"
 version = "0.1.0"
 edition = "2021"
 authors = ["Xanthorrhizol <xanthorrhizol@proton.me>"]
+description = "My personal logger"
+repository = "https://github.com/Xanthorrhizol/xan-log"
+readme = "README.md"
+license = "MIT"
+keywords = ["log", "logger", "json"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
