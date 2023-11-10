@@ -37,6 +37,7 @@ impl<'a> From<&Record<'a>> for XanRecordJson {
         let line = r.line();
         XanRecordJson(
             serde_json::json!({
+                "timestamp": chrono::Utc::now().format("%Y-%m-%dT%H:%M:%S.%3fZ").to_string(),
                 "level": metadata.level().to_string(),
                 "target": metadata.target().to_string(),
                 "module_path": module_path.unwrap_or(""),

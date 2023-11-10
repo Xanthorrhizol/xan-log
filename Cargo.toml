@@ -1,6 +1,6 @@
 [package]
 name = "xan-log"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["Xanthorrhizol <xanthorrhizol@proton.me>"]
 description = "My personal logger"
@@ -12,5 +12,6 @@ keywords = ["log", "logger", "json"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+chrono = "0.4.31"
 log = { version = "0.4.20", features = ["std"] }
 serde_json = "1.0.107"
