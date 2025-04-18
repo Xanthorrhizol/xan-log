@@ -43,7 +43,7 @@ impl Log for XanLogger {
         let file = r.file();
         let line = r.line();
         println!(
-            "[{}] [{}@{}:{}] [target:{}], [module_path:{}] {}",
+            "[{}] [{}@{}:{}] [target:{}] [module_path:{}] {}",
             chrono::Utc::now()
                 .format("%Y-%m-%dT%H:%M:%S.%3fZ")
                 .to_string(),

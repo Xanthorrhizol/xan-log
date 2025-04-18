@@ -1,6 +1,6 @@
 [package]
 name = "xan-log"
-version = "1.0.0"
+version = "1.0.1"
 edition = "2024"
 authors = ["Xanthorrhizol <xanthorrhizol@proton.me>"]
 description = "My personal logger"
