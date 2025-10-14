@@ -13,6 +13,7 @@ static RED_BG_BLACK_TEXT: &str = "\x1b[41;30m";
 static YELLOW_BG_BLACK_TEXT: &str = "\x1b[43;30m";
 static BLUE_BG_WHITE_TEXT: &str = "\x1b[44;37m";
 static GREEN_BG_BLACK_TEXT: &str = "\x1b[42;30m";
+static CYAN_BG_BLACK_TEXT: &str = "\x1b[46;30m";
 static DEFAULT_BG_DEFAULT_TEXT: &str = "\x1b[49;39m";
 
 pub extern crate log;
@@ -42,17 +43,35 @@ impl Log for XanLogger {
         let module_path = r.module_path();
         let file = r.file();
         let line = r.line();
+        let kv = r.key_values();
         println!(
             "[{}] [{}@{}:{}] [target:{}] [module_path:{}] {}",
             chrono::Utc::now()
                 .format("%Y-%m-%dT%H:%M:%S.%3fZ")
                 .to_string(),
-            match metadata.level() {
-                Level::Error => format!("{}ERROR{}", RED_BG_BLACK_TEXT, DEFAULT_BG_DEFAULT_TEXT),
-                Level::Warn => format!("{}WARN{}", YELLOW_BG_BLACK_TEXT, DEFAULT_BG_DEFAULT_TEXT),
-                Level::Info => format!("{}INFO{}", BLUE_BG_WHITE_TEXT, DEFAULT_BG_DEFAULT_TEXT),
-                Level::Debug => format!("{}DEBUG{}", GREEN_BG_BLACK_TEXT, DEFAULT_BG_DEFAULT_TEXT),
-                Level::Trace => format!("{}TRACE{}", DEFAULT_BG_GRAY_TEXT, DEFAULT_BG_DEFAULT_TEXT),
+            if let Some(lv) = kv.get("level".into()) {
+                format!(
+                    "{}{}{}",
+                    CYAN_BG_BLACK_TEXT,
+                    lv.to_string().to_uppercase(),
+                    DEFAULT_BG_DEFAULT_TEXT
+                )
+            } else {
+                match metadata.level() {
+                    Level::Error => {
+                        format!("{}ERROR{}", RED_BG_BLACK_TEXT, DEFAULT_BG_DEFAULT_TEXT)
+                    }
+                    Level::Warn => {
+                        format!("{}WARN{}", YELLOW_BG_BLACK_TEXT, DEFAULT_BG_DEFAULT_TEXT)
+                    }
+                    Level::Info => format!("{}INFO{}", BLUE_BG_WHITE_TEXT, DEFAULT_BG_DEFAULT_TEXT),
+                    Level::Debug => {
+                        format!("{}DEBUG{}", GREEN_BG_BLACK_TEXT, DEFAULT_BG_DEFAULT_TEXT)
+                    }
+                    Level::Trace => {
+                        format!("{}TRACE{}", DEFAULT_BG_GRAY_TEXT, DEFAULT_BG_DEFAULT_TEXT)
+                    }
+                }
             },
             file.unwrap_or(""),
             line.unwrap_or(0),
@@ -80,11 +99,14 @@ pub fn init_logger() -> Result<(), SetLoggerError> {
 
 #[test]
 fn test() {
-    std::env::set_var("LOG_LEVEL", "TRACE");
+    unsafe {
+        std::env::set_var("LOG_LEVEL", "INFO");
+    }
     init_logger();
     log::error!("This is an error message");
     log::warn!("This is a warning message");
     log::info!("This is an info message");
     log::debug!("This is a debug message");
     log::trace!("This is a trace message");
+    log::log!(target: "my_target", Level::Info, level = "CUSTOM"; "test log {}", "TEST");
 }
