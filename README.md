@@ -28,8 +28,14 @@ fn main() {
 }
 ```
 
-> You can use custom log level using key_value in log! macro
-> Just add `level = "YOUR_LEVEL"` in key_value part
-> ``log::log!(target: "my_target", Level::Info, level = "TEST"; "test log {}", "TEST");``
-> That level will printed with CYAN color
+### Custom log level
+
+You can use custom log level using key_value in log! macro
+Just add `level = "YOUR_LEVEL"` in key_value part
+
+```rust
+log::log!(target: "my_target", Level::Info, level = "TEST"; "test log {}", "TEST");
+```
+
+That level will printed with CYAN color
 
