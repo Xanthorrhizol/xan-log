@@ -1,4 +1,5 @@
 use log::{Level, LevelFilter, Log, Metadata, Record, SetLoggerError};
+
 #[allow(dead_code)]
 static DEFAULT_BG_RED_TEXT: &str = "\x1b[31m";
 #[allow(dead_code)]
@@ -18,6 +19,7 @@ static DEFAULT_BG_DEFAULT_TEXT: &str = "\x1b[49;39m";
 
 pub extern crate log;
 
+#[cfg(not(feature = "tracing"))]
 static LOGGER: XanLogger = XanLogger {
     log_level: LevelFilter::Off,
 };
@@ -84,6 +86,7 @@ impl Log for XanLogger {
     fn flush(&self) {}
 }
 
+#[cfg(not(feature = "tracing"))]
 pub fn init_logger() -> Result<(), SetLoggerError> {
     let log_level = std::env::var("LOG_LEVEL").unwrap_or("off".to_string());
     let log_level = match log_level.to_lowercase().as_str() {
@@ -97,12 +100,26 @@ pub fn init_logger() -> Result<(), SetLoggerError> {
     log::set_logger(&LOGGER).map(|()| log::set_max_level(log_level))
 }
 
+#[cfg(feature = "tracing")]
+pub fn init_logger() -> Result<(), SetLoggerError> {
+    let log_level = std::env::var("LOG_LEVEL").unwrap_or("off".to_string());
+
+    let env_filter = tracing_subscriber::EnvFilter::try_from_default_env()
+        .unwrap_or_else(|_| tracing_subscriber::EnvFilter::new(log_level));
+
+    let _ = tracing_subscriber::fmt()
+        .with_env_filter(env_filter)
+        .try_init();
+
+    Ok(())
+}
+
 #[test]
 fn test() {
     unsafe {
         std::env::set_var("LOG_LEVEL", "INFO");
     }
-    init_logger();
+    let _ = init_logger();
     log::error!("This is an error message");
     log::warn!("This is a warning message");
     log::info!("This is an info message");
