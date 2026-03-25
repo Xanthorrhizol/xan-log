@@ -209,8 +209,7 @@ pub fn init_file_logger(dir: &str, prefix: &str) -> Result<FileLoggerGuard, SetL
     let file_appender = tracing_appender::rolling::daily(dir, prefix);
     let (non_blocking, guard) = tracing_appender::non_blocking(file_appender);
 
-    let env_filter = tracing_subscriber::EnvFilter::try_from_default_env()
-        .unwrap_or_else(|_| tracing_subscriber::EnvFilter::new(log_level));
+    let env_filter = tracing_subscriber::EnvFilter::new(log_level);
 
     let _ = tracing_subscriber::fmt()
         .with_env_filter(env_filter)
@@ -221,12 +220,28 @@ pub fn init_file_logger(dir: &str, prefix: &str) -> Result<FileLoggerGuard, SetL
     Ok(FileLoggerGuard(guard))
 }
 
+#[cfg(not(feature = "file"))]
 #[test]
 fn test() {
     unsafe {
         std::env::set_var("LOG_LEVEL", "INFO");
     }
     let _ = init_logger();
+    log::error!("This is an error message");
+    log::warn!("This is a warning message");
+    log::info!("This is an info message");
+    log::debug!("This is a debug message");
+    log::trace!("This is a trace message");
+    log::log!(target: "my_target", Level::Info, level = "CUSTOM"; "test log {}", "TEST");
+}
+
+#[cfg(feature = "file")]
+#[test]
+fn test() {
+    unsafe {
+        std::env::set_var("LOG_LEVEL", "INFO");
+    }
+    let _ = init_file_logger(".", "test");
     log::error!("This is an error message");
     log::warn!("This is a warning message");
     log::info!("This is an info message");
